@@ -61,27 +61,63 @@ bool isHeap(Node* tree) {
 	return result;
 }
 };
+class Solution {
+  public:
+    int countNodes(Node* root){
+      if(!root) return 0;
+      int leftAns = countNodes(root->left);
+      int rightAns = countNodes(root->right);
+      return 1 + leftAns + rightAns ;
+    }
+    bool isCBT(Node* root,int i,int &n){
+        if(!root) return true;
+        if(i > n) return false; //index cant be greater than no. of Nodes
+        return isCBT(root->left,2*i,n) && isCBT(root->right,2*i + 1, n);
+    }
+    bool isMaxHeap(Node* root){
+        if(!root) return true;
+        bool l = isMaxHeap(root->left);
+        bool r = isMaxHeap(root->right);
+        bool ans = true;
+        if(!root->left && !root->right) ans =  true;
+        if(root->left && !root->right) ans = root->data >root->left->data;
+        else if(root->left && root->right){
+            bool leftAns = root->data > root->left->data ;
+            bool rightAns = root->data > root->right->data;
+            ans = leftAns && rightAns;
+        }
+        return ans && l && r ;
+    }
+    bool isHeap(struct Node* tree) {
+        int n = countNodes(tree);
+        if(n == 0) return true;
+        int i = 1; //heap is 1 indexed
+        bool CBT = isCBT(tree,i,n);
+        bool validHeap = isMaxHeap(tree);
+        return CBT && validHeap ;
+    }
+};
 
 int main() {
-IsBinaryTree_MaxHeap bt;
+	//IsBinaryTree_MaxHeap bt;
+	Solution sol;
+	Node* root = new Node(10);
+	root->left = new Node(9);
+	root->right = new Node(8);
+	root->left->left = new Node(7);
+	root->left->right = new Node(6);
+	root->right->left = new Node(5);
+	root->right->right = new Node(4);
+	root->left->left->left = new Node(3);
+	root->left->left->right = new Node(2);
+	root->left->right->left = new Node(1);
 
-Node* root = new Node(10);
-root->left = new Node(9);
-root->right = new Node(8);
-root->left->left = new Node(7);
-root->left->right = new Node(6);
-root->right->left = new Node(5);
-root->right->right = new Node(4);
-root->left->left->left = new Node(3);
-root->left->left->right = new Node(2);
-root->left->right->left = new Node(1);
+	if (sol.isHeap(root) == true)
+		std::cout << "Given binary tree is a Heap" << std::endl;
+	else
+		std::cout << "Given binary tree is not a Heap" << std::endl;
 
-if (bt.isHeap(root) == true)
-	std::cout << "Given binary tree is a Heap" << std::endl;
-else
-	std::cout << "Given binary tree is not a Heap" << std::endl;
-
-return 0;
+	return 0;
 }
 
 // This code is contributed by vikramshirsath177.
