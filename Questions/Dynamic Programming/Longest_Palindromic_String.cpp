@@ -54,6 +54,34 @@ public:
         }
         return s.substr(start, maxLen);
     }
+     int solveUsingTabulationSO(string &a, string &b){
+         vector<int>curr(a.length() + 1,0);
+         vector<int>next(a.length() + 1,0);
+         
+        // already filled by 0 no need of :dp[a.length() - 1][b.length() - 1] = 0;
+        for(int j = b.length() - 1;j>=0;j--){
+             for(int i = a.length() - 1;i>=0;i--){
+                int ans = 0;
+                //when common element is found :
+                if(a[i] == b[j]){
+                    ans = 1 + next[i+1];
+                }
+                else{ //if element do not match
+                    ans = 0 + max( next[i], curr[i+1] );
+                }
+                curr[i] = ans;
+            }
+            //shifting
+            next = curr;
+        }
+        return curr[0] ;
+    }
+    int longestPalindromeSubseq(string s) {
+        string a = s;
+        reverse(s.begin(),s.end());
+        int ans = solveUsingTabulationSO(s,a);
+        return ans;
+    }
 };
 
 int main() {
